@@ -74,7 +74,16 @@ func NewLLMClient(opts Options) (LLMClient, bool) {
 			return LLMClient{}, false
 		}
 	default:
-		return LLMClient{}, false
+		if firstEnv("MANX_BASE_URL", "OPENAI_COMPATIBLE_BASE_URL") == "" {
+			return LLMClient{}, false
+		}
+		c.Provider = "openai"
+		c.APIKey = firstEnv("MANX_API_KEY", providerEnvKey(provider), "OPENAI_COMPATIBLE_API_KEY")
+		c.Model = firstEnv("MANX_MODEL", "OPENAI_COMPATIBLE_MODEL")
+		c.BaseURL = strings.TrimRight(firstEnv("MANX_BASE_URL", "OPENAI_COMPATIBLE_BASE_URL"), "/")
+		if c.Model == "" || c.APIKey == "" {
+			return LLMClient{}, false
+		}
 	}
 	return c, c.APIKey != ""
 }
@@ -89,6 +98,26 @@ func normalizeProvider(provider string) string {
 	default:
 		return p
 	}
+}
+
+func providerEnvKey(provider string) string {
+	if provider == "" {
+		return ""
+	}
+	var b strings.Builder
+	for _, ch := range provider {
+		switch {
+		case ch >= 'a' && ch <= 'z':
+			b.WriteRune(ch - 'a' + 'A')
+		case ch >= 'A' && ch <= 'Z':
+			b.WriteRune(ch)
+		case ch >= '0' && ch <= '9':
+			b.WriteRune(ch)
+		default:
+			b.WriteRune('_')
+		}
+	}
+	return b.String() + "_API_KEY"
 }
 
 func (c LLMClient) Ask(system, prompt string) (string, error) {

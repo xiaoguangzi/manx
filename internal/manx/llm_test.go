@@ -119,6 +119,39 @@ func TestOpenAICompatibleRequiresBaseURLAndModel(t *testing.T) {
 	}
 }
 
+func TestUnknownProviderWithBaseURLUsesOpenAICompatible(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/chat/completions" {
+			t.Fatalf("path = %s", r.URL.Path)
+		}
+		if r.Header.Get("Authorization") != "Bearer custom-key" {
+			t.Fatalf("missing authorization header")
+		}
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"choices": []map[string]any{
+				{"message": map[string]string{"content": "ok from custom"}},
+			},
+		})
+	}))
+	defer server.Close()
+
+	t.Setenv("MANX_LLM_PROVIDER", "my-provider")
+	t.Setenv("MY_PROVIDER_API_KEY", "custom-key")
+	t.Setenv("MANX_BASE_URL", server.URL)
+	t.Setenv("MANX_MODEL", "custom-model")
+	client, ok := NewLLMClient(Options{})
+	if !ok {
+		t.Fatal("expected enabled compatible client")
+	}
+	got, err := client.Ask("system", "prompt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got != "ok from custom" {
+		t.Fatalf("got %q", got)
+	}
+}
+
 func TestNoLLMDisablesClient(t *testing.T) {
 	t.Setenv("MANX_API_KEY", "test-key")
 	if _, ok := NewLLMClient(Options{NoLLM: true}); ok {
