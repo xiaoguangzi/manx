@@ -6,3 +6,6 @@ dist/
 .venv/
 .pytest_cache/
 .DS_Store
+
+# 内部设计文档，不随代码发布（本地保留）
+PRD.md
