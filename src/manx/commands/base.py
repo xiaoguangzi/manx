@@ -31,7 +31,8 @@ class Context:
     def ask_llm(self, prompt: str) -> Optional[str]:
         if not self.llm_enabled():
             return None
-        res = llm.explain(prompt, self.config.llm_provider, self.config.llm_model)
+        res = llm.explain(prompt, self.config.llm_provider, self.config.llm_model,
+                          self.config.llm_base_url)
         return res.text if res else None
 
 

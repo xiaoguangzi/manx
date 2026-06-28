@@ -17,6 +17,7 @@ DEFAULTS: Dict[str, Any] = {
     "mode": "beginner",          # beginner | short | pro
     "llm_provider": "auto",      # auto | anthropic | openai | none
     "llm_model": "",             # 留空则按 provider 取默认
+    "llm_base_url": "",          # 留空用官方 base；可填第三方中转/自建网关
     "offline_first": True,
     "risk_guard": True,
     "max_output_lines": 80,
@@ -62,6 +63,7 @@ class Config:
     mode: str = DEFAULTS["mode"]
     llm_provider: str = DEFAULTS["llm_provider"]
     llm_model: str = DEFAULTS["llm_model"]
+    llm_base_url: str = DEFAULTS["llm_base_url"]
     offline_first: bool = DEFAULTS["offline_first"]
     risk_guard: bool = DEFAULTS["risk_guard"]
     max_output_lines: int = DEFAULTS["max_output_lines"]
@@ -86,6 +88,7 @@ def load_config() -> Config:
         "MANX_MODE": "mode",
         "MANX_LLM_PROVIDER": "llm_provider",
         "MANX_LLM_MODEL": "llm_model",
+        "MANX_BASE_URL": "llm_base_url",
         "MANX_COLOR": "color",
     }
     for env, key in env_map.items():
@@ -101,6 +104,7 @@ def load_config() -> Config:
         mode=str(data.get("mode", DEFAULTS["mode"])),
         llm_provider=str(data.get("llm_provider", DEFAULTS["llm_provider"])),
         llm_model=str(data.get("llm_model", DEFAULTS["llm_model"])),
+        llm_base_url=str(data.get("llm_base_url", DEFAULTS["llm_base_url"])),
         offline_first=bool(data.get("offline_first", DEFAULTS["offline_first"])),
         risk_guard=bool(data.get("risk_guard", DEFAULTS["risk_guard"])),
         max_output_lines=int(data.get("max_output_lines", DEFAULTS["max_output_lines"])),
