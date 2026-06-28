@@ -1,0 +1,49 @@
+{
+  "command": "systemctl",
+  "purpose": "管理 systemd 服务（启动、停止、查看状态、开机自启）",
+  "common_tasks": [
+    {
+      "cmd": "systemctl status nginx",
+      "desc": "查看 nginx 服务状态（只读）"
+    },
+    {
+      "cmd": "sudo systemctl restart nginx",
+      "desc": "重启 nginx"
+    },
+    {
+      "cmd": "sudo systemctl enable nginx",
+      "desc": "设置开机自启"
+    },
+    {
+      "cmd": "systemctl list-units --type=service",
+      "desc": "列出所有服务"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "status",
+      "meaning": "查看服务状态（只读）"
+    },
+    {
+      "option": "start/stop/restart",
+      "meaning": "启动/停止/重启服务（需要 sudo）"
+    },
+    {
+      "option": "enable/disable",
+      "meaning": "设置/取消开机自启"
+    },
+    {
+      "option": "--no-pager",
+      "meaning": "不进入分页器，直接输出"
+    }
+  ],
+  "common_mistakes": [
+    "start/stop/restart 通常需要 sudo；status 一般不需要"
+  ],
+  "risks": [
+    "stop/disable/mask 会改变服务运行状态，属高风险"
+  ],
+  "next_steps": [
+    "服务启动失败时用 journalctl -u 服务名 -n 100 看日志"
+  ]
+}

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "manx"
+version = "0.6.0"
+description = "面向 Linux 新手的本地命令理解层：把 man / --help 讲成人话，带风险提示与报错解释"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "ManCoach" }]
+keywords = ["man", "linux", "cli", "beginner", "help", "shell"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Shells",
+]
+# 核心零依赖。LLM 能力为可选增强，按需安装。
+dependencies = []
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.39"]
+openai = ["openai>=1.0"]
+
+[project.scripts]
+manx = "manx.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+manx = ["data/*.json", "data/cards/*.json"]
