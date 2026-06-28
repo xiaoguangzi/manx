@@ -1,1 +1,128 @@
-# manx
+# manx — 把 Linux 命令讲成人话
+
+> **面向 Linux 新手的本地命令理解层。** 不是替代 `man`，而是 *explained man*：
+> 把本机 `man` / `--help` / shell builtin help 解释成人话，带**风险提示**、**示例**、**报错解释**。
+
+manx 解决的不是“让 AI 替你操作 Linux”，而是：
+
+```
+你不知道命令怎么用 → 它把 man 讲成人话
+你不懂参数含义     → 它逐项解释
+你不敢执行命令     → 它告诉你风险（规则引擎硬判定，不靠 LLM 猜）
+你遇到报错         → 它告诉你下一步查什么
+你想完成任务       → 它推荐本机可用的安全命令
+```
+
+## 特点
+
+- **本机优先**：解释基于本机 `man` / `--help` / `type` / `whatis` 与系统上下文，减少幻觉、贴合你的发行版与命令版本。
+- **安全规则硬编码**：危险命令（`rm -rf`、`chmod -R 777 /`、`dd of=/dev/*`、`curl | bash` 等）由规则引擎判定风险等级（0~4），**不交给 LLM**。
+- **离线可用**：核心零依赖，内置高频命令知识卡片、报错库、场景库，没有 API key 也能用。
+- **LLM 可选增强**：配置 `ANTHROPIC_API_KEY`（默认，Claude 原生）或 `OPENAI_API_KEY` 后，能结合本机文档自由解释更多命令。发送前自动**脱敏**（key/token/密码/私钥）。
+- **终端友好**：输出短、准、可复制，默认限制行数，适配窄终端。
+
+## 安装
+
+```bash
+pip install -e .          # 从源码安装，提供 manx 命令
+# 或者无需安装直接运行：
+PYTHONPATH=src python3 -m manx tar
+```
+
+可选 LLM 依赖（不装也能跑，会走内置 HTTP 调用）：
+
+```bash
+pip install -e ".[anthropic]"   # 或 .[openai]
+```
+
+## 用法
+
+```bash
+manx <命令>                    # 新手解释一个命令，如 manx tar
+manx explain "<整条命令>"       # 解释整条命令并标注风险
+manx ask "<想做什么>"           # 根据自然语言推荐本机可用命令
+manx fix "<报错信息>"           # 解释报错并给安全排查步骤
+manx option <命令> <参数>        # 解释某个参数，如 manx option tar -z
+manx cheat <命令>               # 只看常用示例（速查）
+manx compare <命令1> <命令2>     # 对比两个命令
+```
+
+### 模式与开关
+
+| 开关 | 作用 |
+|------|------|
+| `--beginner`（默认） / `--short` / `--pro` | 新手 / 精简 / 老手 输出 |
+| `--json` | 结构化输出，便于集成 |
+| `--full` | 不截断输出 |
+| `--no-llm` | 强制纯离线（只用卡片 + 规则） |
+| `--color=auto\|always\|never` | 颜色控制 |
+| `--version` / `-h` | 版本 / 帮助 |
+
+### 示例
+
+```bash
+manx grep
+manx tar --short
+manx explain "sudo chmod -R 777 /usr"     # → 风险：极高，结论：不要执行
+manx explain "find . -name '*.log' -delete"
+manx ask "怎么查 8080 端口被谁占用"
+manx fix "Address already in use"
+manx option find -mtime
+```
+
+## 风险分级
+
+| 等级 | 含义 | 例子 |
+|------|------|------|
+| 0 无风险 | 只读查询 | `ls`、`ss -lntp`、`ps aux` |
+| 1 低 | 普通用户可控 | `mkdir`、`touch`、`tar -xzf` |
+| 2 中 | 可能覆盖/删除/移动 | `rm file`、`mv a b` |
+| 3 高 | 递归删除/改权限、sudo 改系统、停服务 | `rm -r dir`、`sudo systemctl stop nginx`、`curl\|bash` |
+| 4 极高 | 可能破坏系统/磁盘/安全边界 | `sudo rm -rf /`、`chmod -R 777 /etc`、`dd of=/dev/sda` |
+
+风险等级由规则引擎给出；启用 LLM 时，LLM 只负责把原因讲清楚，**不能改写等级**。
+
+## 配置
+
+`~/.config/manx/config.toml`（见 `config.example.toml`）：
+
+```toml
+language = "zh-CN"
+mode = "beginner"
+llm_provider = "auto"    # auto | anthropic | openai | none
+offline_first = true
+risk_guard = true
+max_output_lines = 80
+```
+
+环境变量（优先级更高）：`MANX_LANG`、`MANX_MODE`、`MANX_LLM_PROVIDER`、`MANX_API_KEY`、`MANX_COLOR`、`MANX_OFFLINE`。
+
+## 架构
+
+```
+CLI 层 (cli.py)
+  → 意图分发 (commands/*)
+  → 本机资料采集 (collectors.py：man/--help/type/whatis)
+  → 命令解析   (parser.py：管道/重定向/sudo/短参组合/长参)
+  → 风险规则   (risk.py：硬编码，安全核心)
+  → 知识卡片   (cards.py + data/cards/*.json)
+  → LLM 解释   (llm.py：可选，带防幻觉约束与脱敏)
+  → 输出渲染   (render.py：颜色/风险色/行数控制)
+```
+
+## 隐私
+
+默认只把必要文本发给 LLM（用户输入、命令名、man/help 片段、发行版信息）。**不上传** 环境变量、shell history、SSH key、token、`.env`、私有文件内容。发送前对 key/token/密码/私钥自动脱敏。
+
+## 测试
+
+```bash
+python3 -m pytest tests/     # 若无 pytest，见 tests/ 顶部说明可直接 import 运行
+```
+
+## 当前覆盖
+
+内置卡片：`grep find tar rm chmod chown ls ps ss curl kill systemctl journalctl`（持续扩充）。
+报错库 16 条高频错误；场景库 12 类常见任务。
+
+实现范围对应 PRD 的 V0.1–V0.6（五大入口 + 风险规则 + 报错/场景库 + 可选 LLM）。

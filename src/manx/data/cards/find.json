@@ -1,0 +1,66 @@
+{
+  "command": "find",
+  "purpose": "按名字、大小、时间等条件在目录树里查找文件",
+  "common_tasks": [
+    {
+      "cmd": "find . -name \"*.log\"",
+      "desc": "查找当前目录下所有 .log 文件"
+    },
+    {
+      "cmd": "find . -type f -size +100M",
+      "desc": "查找大于 100MB 的普通文件"
+    },
+    {
+      "cmd": "find . -type f -mtime -1",
+      "desc": "查找最近 1 天内修改过的文件"
+    },
+    {
+      "cmd": "find . -name \"*.log\" -mtime +7 -print",
+      "desc": "预览 7 天前的旧日志（只列出不删除）"
+    },
+    {
+      "cmd": "find . -type d -name node_modules",
+      "desc": "查找名为 node_modules 的目录"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "-name",
+      "meaning": "按文件名匹配（区分大小写，支持通配符，需加引号）"
+    },
+    {
+      "option": "-iname",
+      "meaning": "按文件名匹配，忽略大小写"
+    },
+    {
+      "option": "-type",
+      "meaning": "按类型过滤：f 文件、d 目录、l 软链接"
+    },
+    {
+      "option": "-size",
+      "meaning": "按大小过滤：+100M 大于 100MB，-1k 小于 1KB"
+    },
+    {
+      "option": "-mtime",
+      "meaning": "按修改时间（天）：+7 超过 7 天，-1 最近 1 天"
+    },
+    {
+      "option": "-delete",
+      "meaning": "删除匹配到的文件（危险，先用 -print 预览）"
+    },
+    {
+      "option": "-exec",
+      "meaning": "对每个匹配项执行命令，以 \\; 结尾"
+    }
+  ],
+  "common_mistakes": [
+    "-name 的通配符要加引号，否则会被 shell 先展开",
+    "-delete 会真实删除，务必先用 -print 确认匹配结果"
+  ],
+  "risks": [
+    "-delete 和 -exec rm 会删除文件，属于中高风险"
+  ],
+  "next_steps": [
+    "确认匹配无误后，再把 -print 换成 -delete"
+  ]
+}

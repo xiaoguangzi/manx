@@ -1,0 +1,47 @@
+{
+  "command": "rm",
+  "purpose": "删除文件或目录（删除后通常不可恢复，没有回收站）",
+  "common_tasks": [
+    {
+      "cmd": "rm file.txt",
+      "desc": "删除单个文件"
+    },
+    {
+      "cmd": "rm -i file.txt",
+      "desc": "删除前逐个确认（更安全）"
+    },
+    {
+      "cmd": "rm -r dir",
+      "desc": "递归删除整个目录"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "-r, -R, --recursive",
+      "meaning": "递归删除目录及其内容"
+    },
+    {
+      "option": "-f, --force",
+      "meaning": "强制删除，不提示（危险）"
+    },
+    {
+      "option": "-i",
+      "meaning": "每次删除前确认"
+    },
+    {
+      "option": "-v",
+      "meaning": "显示删除了什么"
+    }
+  ],
+  "common_mistakes": [
+    "rm -rf 配合通配符或写错路径会误删大量文件",
+    "rm 没有回收站，删了一般找不回来"
+  ],
+  "risks": [
+    "rm 删除不可恢复",
+    "rm -rf / 、rm -rf ~ 、rm -rf * 是经典灾难命令"
+  ],
+  "next_steps": [
+    "删目录前先 ls 看清内容；不确定就先 mv 到临时目录而不是 rm"
+  ]
+}

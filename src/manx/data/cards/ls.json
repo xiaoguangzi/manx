@@ -1,0 +1,57 @@
+{
+  "command": "ls",
+  "purpose": "列出目录内容",
+  "common_tasks": [
+    {
+      "cmd": "ls -l",
+      "desc": "详细列表（权限、属主、大小、时间）"
+    },
+    {
+      "cmd": "ls -lh",
+      "desc": "大小用人类可读单位（K/M/G）"
+    },
+    {
+      "cmd": "ls -la",
+      "desc": "包含隐藏文件（以 . 开头）"
+    },
+    {
+      "cmd": "ls -lt",
+      "desc": "按修改时间排序，最新在前"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "-l",
+      "meaning": "长格式，显示详细信息"
+    },
+    {
+      "option": "-a, --all",
+      "meaning": "显示隐藏文件"
+    },
+    {
+      "option": "-h, --human-readable",
+      "meaning": "大小用 K/M/G 显示"
+    },
+    {
+      "option": "-t",
+      "meaning": "按修改时间排序"
+    },
+    {
+      "option": "-r, --reverse",
+      "meaning": "反转排序"
+    },
+    {
+      "option": "-S",
+      "meaning": "按文件大小排序"
+    }
+  ],
+  "common_mistakes": [
+    "默认不显示隐藏文件，要看 .env / .git 等需加 -a"
+  ],
+  "risks": [
+    "ls 是只读命令，无风险"
+  ],
+  "next_steps": [
+    "ls -lh 是查看文件大小最顺手的组合"
+  ]
+}

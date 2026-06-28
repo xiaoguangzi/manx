@@ -1,0 +1,49 @@
+{
+  "command": "ss",
+  "purpose": "查看网络连接和监听端口（netstat 的现代替代）",
+  "common_tasks": [
+    {
+      "cmd": "ss -lntp",
+      "desc": "查看所有 TCP 监听端口及对应进程"
+    },
+    {
+      "cmd": "ss -lntp | grep ':8080'",
+      "desc": "查 8080 端口被谁占用"
+    },
+    {
+      "cmd": "ss -tunap",
+      "desc": "查看所有 TCP/UDP 连接"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "-l",
+      "meaning": "只看监听中的端口"
+    },
+    {
+      "option": "-n",
+      "meaning": "显示数字端口，不解析成服务名/域名"
+    },
+    {
+      "option": "-t",
+      "meaning": "只看 TCP"
+    },
+    {
+      "option": "-u",
+      "meaning": "只看 UDP"
+    },
+    {
+      "option": "-p",
+      "meaning": "显示占用端口的进程（常需 sudo 才能看到进程名）"
+    }
+  ],
+  "common_mistakes": [
+    "看不到进程名通常是权限不够，加 sudo 再试"
+  ],
+  "risks": [
+    "ss 是只读查询命令，无风险"
+  ],
+  "next_steps": [
+    "确认端口被某进程占用后，再决定是改自己的端口还是停掉它"
+  ]
+}

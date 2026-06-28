@@ -1,0 +1,11 @@
+# manx 配置示例。复制到 ~/.config/manx/config.toml 后按需修改。
+# 环境变量（MANX_LANG / MANX_MODE / MANX_LLM_PROVIDER / MANX_API_KEY ...）优先级更高。
+
+language = "zh-CN"        # 输出语言
+mode = "beginner"         # beginner | short | pro
+llm_provider = "auto"     # auto | anthropic | openai | none
+# llm_model = ""          # 留空则按 provider 取默认（anthropic: claude-haiku-4-5）
+offline_first = true      # 优先离线（卡片 + 规则），有 key 时再增强
+risk_guard = true         # 启用危险命令规则
+max_output_lines = 80     # 终端输出最大行数（--full 可解除）
+color = "auto"            # auto | always | never

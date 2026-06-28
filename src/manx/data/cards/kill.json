@@ -1,0 +1,37 @@
+{
+  "command": "kill",
+  "purpose": "给进程发送信号（最常用是结束进程）",
+  "common_tasks": [
+    {
+      "cmd": "kill 1234",
+      "desc": "礼貌地请求结束 PID 1234（默认 TERM 信号）"
+    },
+    {
+      "cmd": "kill -9 1234",
+      "desc": "强制结束（进程来不及清理，最后手段）"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "-9, -KILL",
+      "meaning": "强制结束，进程无法捕获/清理"
+    },
+    {
+      "option": "-15, -TERM",
+      "meaning": "默认信号，请求进程正常退出"
+    },
+    {
+      "option": "-l",
+      "meaning": "列出所有信号"
+    }
+  ],
+  "common_mistakes": [
+    "先试默认 kill，不行再 -9；直接 -9 可能导致数据没保存"
+  ],
+  "risks": [
+    "kill 结束进程属中风险；批量 pkill/killall 可能误杀同名进程"
+  ],
+  "next_steps": [
+    "先 ps aux | grep 或 ss -lntp 确认 PID 对应的是不是你要结束的进程"
+  ]
+}

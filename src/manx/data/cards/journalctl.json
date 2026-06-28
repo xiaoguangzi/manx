@@ -1,0 +1,57 @@
+{
+  "command": "journalctl",
+  "purpose": "查看 systemd 的系统与服务日志",
+  "common_tasks": [
+    {
+      "cmd": "journalctl -u nginx --no-pager",
+      "desc": "查看 nginx 服务的日志"
+    },
+    {
+      "cmd": "journalctl -u nginx -n 100",
+      "desc": "查看 nginx 最近 100 行日志"
+    },
+    {
+      "cmd": "journalctl -xe",
+      "desc": "查看最近的错误日志（排查启动失败常用）"
+    },
+    {
+      "cmd": "journalctl -f",
+      "desc": "实时跟踪新日志"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "-u",
+      "meaning": "按服务（unit）过滤"
+    },
+    {
+      "option": "-n",
+      "meaning": "只看最后 N 行"
+    },
+    {
+      "option": "-f",
+      "meaning": "实时跟踪（类似 tail -f）"
+    },
+    {
+      "option": "-x",
+      "meaning": "附带解释信息"
+    },
+    {
+      "option": "--no-pager",
+      "meaning": "直接输出不分页"
+    },
+    {
+      "option": "--since",
+      "meaning": "从某时间开始，如 --since \"10 min ago\""
+    }
+  ],
+  "common_mistakes": [
+    "看完整服务日志常需要 sudo 权限"
+  ],
+  "risks": [
+    "journalctl 是只读命令，无风险"
+  ],
+  "next_steps": [
+    "先 systemctl status 看概况，再 journalctl -u 看详细日志"
+  ]
+}

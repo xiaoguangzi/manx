@@ -1,0 +1,33 @@
+{
+  "command": "chown",
+  "purpose": "修改文件/目录的属主和属组",
+  "common_tasks": [
+    {
+      "cmd": "sudo chown $USER file",
+      "desc": "把文件属主改成当前用户"
+    },
+    {
+      "cmd": "sudo chown -R $USER:$USER ./project",
+      "desc": "递归把项目目录归属给自己"
+    }
+  ],
+  "common_options": [
+    {
+      "option": "-R, --recursive",
+      "meaning": "递归修改目录下所有文件"
+    },
+    {
+      "option": "-v",
+      "meaning": "显示改了哪些文件"
+    }
+  ],
+  "common_mistakes": [
+    "不要把 /usr /etc /bin 等系统目录 chown 给普通用户，会破坏系统"
+  ],
+  "risks": [
+    "chown -R 作用于系统目录属于极高风险"
+  ],
+  "next_steps": [
+    "只改你自己项目目录的归属，不要碰系统目录"
+  ]
+}
